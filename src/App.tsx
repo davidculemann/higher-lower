@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { config } from "dotenv";
 import { restcountriesURL } from "./utils/apiURL";
 
 config();
 
-const serverBaseURL = process.env.REACT_APP_API_BASE;
+//const serverBaseURL = process.env.REACT_APP_API_BASE;
 
 interface CountryType {
   name: { common: string };
@@ -25,18 +25,16 @@ function App(): JSX.Element {
     },
   ]);
 
-  const handleFetchCountries = () => {
+  const handleFetchCountries = useCallback(() => {
     axios.get(`${restcountriesURL}all`).then((response) => {
       const fetchedCountries = response.data;
       setCountries(fetchedCountries);
     });
+  }, []);
 
-    console.log("button was clicked, trying to get data");
-    console.log(countries.length);
-    console.log(countries);
-  };
-
-  useEffect(handleFetchCountries, []);
+  useEffect(() => {
+    handleFetchCountries();
+  }, [handleFetchCountries]);
 
   return (
     <div>
@@ -44,7 +42,7 @@ function App(): JSX.Element {
       <p>{countries[0]?.name.common}</p>
       <p>{countries[0]?.population}</p>
       <p>{countries[0]?.area}</p>
-      <img src={countries[0]?.flags.svg} />
+      <img src={countries[0]?.flags.svg} alt={"country flag"} />
     </div>
   );
 }
