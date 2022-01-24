@@ -41,12 +41,12 @@ export function GameScreen(): JSX.Element {
           <button onClick={() => setRandomIndex(getRandomInt(250))}>
             Fetch countries
           </button>
-          <p>{countries && countries[randomIndex].name}</p>
-          <p>{countries && countries[randomIndex]?.population}</p>
-          <p>{countries && countries[randomIndex]?.area}</p>
+          <p>{countries[randomIndex].name}</p>
+          <p>{countries[randomIndex]?.population}</p>
+          <p>{countries[randomIndex]?.area}</p>
           <img
-            src={countries && countries[randomIndex]?.flag}
-            alt={"country flag"}
+            src={countries[randomIndex]?.flag}
+            alt={`country flag of ${countries[randomIndex].name}`}
           />
         </div>
       )}
