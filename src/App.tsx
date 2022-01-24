@@ -1,7 +1,50 @@
-import { greet } from "./utils/greet";
+import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import "./App.css";
+import { config } from "dotenv";
+import { restcountriesURL } from "./utils/apiURL";
+
+config();
+
+//const serverBaseURL = process.env.REACT_APP_API_BASE;
+
+interface CountryType {
+  name: { common: string };
+  area: number;
+  population: number;
+  flags: { svg: string };
+}
 
 function App(): JSX.Element {
-  return <h1>{greet("World")}</h1>;
+  const [countries, setCountries] = useState<Partial<CountryType[]>>([
+    {
+      name: { common: "none loaded" },
+      area: 0,
+      population: 0,
+      flags: { svg: "" },
+    },
+  ]);
+
+  const handleFetchCountries = useCallback(() => {
+    axios.get(`${restcountriesURL}all`).then((response) => {
+      const fetchedCountries = response.data;
+      setCountries(fetchedCountries);
+    });
+  }, []);
+
+  useEffect(() => {
+    handleFetchCountries();
+  }, [handleFetchCountries]);
+
+  return (
+    <div>
+      <button onClick={() => handleFetchCountries()}>Fetch countries</button>
+      <p>{countries[0]?.name.common}</p>
+      <p>{countries[0]?.population}</p>
+      <p>{countries[0]?.area}</p>
+      <img src={countries[0]?.flags.svg} alt={"country flag"} />
+    </div>
+  );
 }
 
 export default App;
