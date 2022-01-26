@@ -3,14 +3,23 @@
 /* * {
   font-family: "Vazir", sans-serif !important;
 } */
-
 * {
   font-family: "Josefin Sans", cursive;
 }
 
-img {
-  height: 300px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-screen {
+  padding: 10px;
 }
 
 .home-header {
@@ -18,8 +27,45 @@ img {
   align-items: center;
 }
 
+.navbar {
+  display: flex;
+  padding: 2em;
+  background-color: wheat;
+}
+
+.login-div {
+  margin-right: 5em;
+  margin-left: auto;
+}
+
+/* Game screen styles */
+.options-panel {
+  display: flex;
+}
+
+.left-option,
+.right-option {
+  flex: 1;
+  justify-content: center;
+  text-align: center;
+}
+
+.game-screen {
+  padding: 10px;
+}
+
+img {
+  height: 400px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 Dialog {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.footer {
+  margin-top: auto;
+  flex-shrink: 0;
 }
