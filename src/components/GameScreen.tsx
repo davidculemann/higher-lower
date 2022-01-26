@@ -3,12 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 import { CountryType } from "../utils/types/countryType";
 import { restcountriesURL } from "../utils/apiURL";
 import { getTwoRandomInts } from "../utils/getTwoRandomInts";
+import { readableNumber } from "../utils/readableNumber";
 //MUI dialog imports
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
+import { DialogTitle } from "@material-ui/core";
 
 export function GameScreen(): JSX.Element {
   const [countries, setCountries] = useState<CountryType[] | null>(null);
@@ -51,16 +53,11 @@ export function GameScreen(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialised]);
 
-  const handleEndGame = () => {
-    console.log("guessed wrong :(");
-    setOpenAlert(true);
-  };
-
   const handleRestartGame = () => {
     setScore(0);
     handleFetchCountries();
-    setCountryOptions(null);
-    setInitialised(!initialised);
+    //triggering createOptionArr twice (BUG)
+    setInitialised(false);
   };
 
   const handleGuess = (higher: boolean, subcategory: string) => {
@@ -76,9 +73,9 @@ export function GameScreen(): JSX.Element {
         setScore(score + 1);
       } else {
         //terminate game
-        handleEndGame();
+        setOpenAlert(true);
       }
-    } else if (countryOptions) {
+    } else if (subcategory === "population" && countryOptions) {
       if (
         (higher &&
           countryOptions[1].population > countryOptions[0].population) ||
@@ -90,7 +87,7 @@ export function GameScreen(): JSX.Element {
         setScore(score + 1);
       } else {
         //terminate game
-        handleEndGame();
+        setOpenAlert(true);
       }
     }
   };
@@ -122,21 +119,25 @@ export function GameScreen(): JSX.Element {
     }
   }
 
+  const handleClose = (reason: string) => {
+    if (reason !== "backdropClick") {
+      setOpenAlert(false);
+    }
+  };
+
   return (
     <div>
       <>
         <Dialog
           open={openAlert}
-          onClose={() => setOpenAlert(false)}
+          onClose={() => handleClose("backdropClick")}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          {/* <DialogTitle id="alert-dialog-title">
-            {"Use Google's location service?"}
-          </DialogTitle> */}
+          <DialogTitle id="alert-dialog-title">{"GAME OVER"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Well done! you scored {score}.
+              Your score: {score}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -161,8 +162,10 @@ export function GameScreen(): JSX.Element {
         <div id="options">
           <div id="left-option">
             <p>{countryOptions[0].name}</p>
-            <p>population {countryOptions[0].population}</p>
-            <p>area {countryOptions[0].area}</p>
+            <p>population {readableNumber(countryOptions[0].population)}</p>
+            <p>
+              area {readableNumber(countryOptions[0].area)} km<sup>2</sup>{" "}
+            </p>
             <img
               src={countryOptions[0].flag}
               alt={`country flag of ${countryOptions[0].name}`}
@@ -170,9 +173,8 @@ export function GameScreen(): JSX.Element {
           </div>
           <div id="right-option">
             <p>{countryOptions[1].name}</p>
-            <p>population {countryOptions[1].population}</p>
+            <p>population {readableNumber(countryOptions[1].population)}</p>
             <p>area: ???</p>
-            {/* <p>{countryOptions[1].area}</p> */}
             <img
               src={countryOptions[1].flag}
               alt={`country flag of ${countryOptions[1].name}`}
