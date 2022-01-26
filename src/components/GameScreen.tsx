@@ -5,6 +5,7 @@ import { CountryType } from "../utils/types/countryType";
 import { restcountriesURL } from "../utils/apiURL";
 import { getTwoRandomInts } from "../utils/getTwoRandomInts";
 import { readableNumber } from "../utils/readableNumber";
+import { GeoFooter } from "./GeoFooter";
 //MUI dialog imports
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -127,7 +128,7 @@ export function GameScreen(): JSX.Element {
   };
 
   return (
-    <div>
+    <div className="game-screen">
       <Link to="/">
         <Button variant="contained">Home</Button>
       </Link>
@@ -139,8 +140,8 @@ export function GameScreen(): JSX.Element {
       </Button>
       <p>score: {score}</p>
       {countryOptions && (
-        <div id="options">
-          <div id="left-option">
+        <div className="options-panel">
+          <div className="left-option">
             <p>{countryOptions[0].name}</p>
             <p>population {readableNumber(countryOptions[0].population)}</p>
             <p>
@@ -151,7 +152,7 @@ export function GameScreen(): JSX.Element {
               alt={`country flag of ${countryOptions[0].name}`}
             />
           </div>
-          <div id="right-option">
+          <div className="right-option">
             <p>{countryOptions[1].name}</p>
             <p>population {readableNumber(countryOptions[1].population)}</p>
             <p>area: ???</p>
@@ -189,6 +190,7 @@ export function GameScreen(): JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
+      <GeoFooter />
     </div>
   );
 }

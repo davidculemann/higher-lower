@@ -7,19 +7,14 @@ import {
   RadioGroup,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { RiArrowUpDownLine } from "react-icons/ri";
 import { useState } from "react";
 
 export function HomeScreen(): JSX.Element {
   const [category, setCategory] = useState<string>("area");
 
   return (
-    <div>
-      <h1 className="home-header">
-        Higher Lower<span>&nbsp;</span>
-        <RiArrowUpDownLine />
-      </h1>
-      <Link to="/game">
+    <div className="home-screen">
+      <Link to="/play">
         <Button variant="contained" onClick={() => console.log(category)}>
           Play
         </Button>
