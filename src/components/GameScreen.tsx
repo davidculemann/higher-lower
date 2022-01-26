@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { CountryType } from "../utils/types/countryType";
 import { restcountriesURL } from "../utils/apiURL";
@@ -127,36 +128,15 @@ export function GameScreen(): JSX.Element {
 
   return (
     <div>
-      <>
-        <Dialog
-          open={openAlert}
-          onClose={() => handleClose("backdropClick")}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"GAME OVER"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Your score: {score}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenAlert(false)}>Main menu</Button>
-            <Button
-              onClick={() => {
-                handleRestartGame();
-                setOpenAlert(false);
-              }}
-              autoFocus
-            >
-              Restart
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-
-      <button onClick={() => handleGuess(true, "area")}>Higher</button>
-      <button onClick={() => handleGuess(false, "area")}>Lower</button>
+      <Link to="/">
+        <Button variant="contained">Home</Button>
+      </Link>
+      <Button variant="contained" onClick={() => handleGuess(true, "area")}>
+        Higher
+      </Button>
+      <Button variant="contained" onClick={() => handleGuess(false, "area")}>
+        Lower
+      </Button>
       <p>score: {score}</p>
       {countryOptions && (
         <div id="options">
@@ -182,6 +162,33 @@ export function GameScreen(): JSX.Element {
           </div>
         </div>
       )}
+      <Dialog
+        open={openAlert}
+        onClose={() => handleClose("backdropClick")}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"GAME OVER"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Your score: {score}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Link to="/">
+            <Button onClick={() => setOpenAlert(false)}>Main menu</Button>
+          </Link>
+          <Button
+            onClick={() => {
+              handleRestartGame();
+              setOpenAlert(false);
+            }}
+            autoFocus
+          >
+            Restart
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
