@@ -1,7 +1,7 @@
 import { Button, InputAdornment, TextField } from "@material-ui/core";
 import { AccountCircle } from "@material-ui/icons";
 import { useState } from "react";
-import { RiArrowUpDownLine } from "react-icons/ri";
+// import { RiArrowUpDownLine } from "react-icons/ri";
 
 export function Navbar(): JSX.Element {
   const [user, setUser] = useState<string>("");
@@ -13,8 +13,10 @@ export function Navbar(): JSX.Element {
   return (
     <div className="navbar">
       <h1 className="home-header">
-        Higher Lower<span>&nbsp;</span>
-        <RiArrowUpDownLine />
+        <span style={{ color: "#006400", fontSize: "1.5em" }}>Higher</span>
+        <span style={{ color: "#8b0000", fontSize: "1.5em" }}>Lower</span>
+        <span>&nbsp;</span>
+        {/* <RiArrowUpDownLine /> */}
       </h1>
       <div className="login-div">
         <TextField
@@ -23,9 +25,7 @@ export function Navbar(): JSX.Element {
           value={user}
           onChange={(e) => setUser(e.target.value)}
           InputProps={{
-            endAdornment: (
-              <Button onClick={() => handleLogin()}>Login/Signup</Button>
-            ),
+            endAdornment: <Button onClick={() => handleLogin()}>Login</Button>,
             startAdornment: (
               <InputAdornment position="start">
                 <AccountCircle />

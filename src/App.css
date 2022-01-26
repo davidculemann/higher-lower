@@ -20,6 +20,10 @@ body {
 
 .home-screen {
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .home-header {
@@ -56,6 +60,7 @@ body {
 
 img {
   height: 400px;
+  max-width: 100%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
@@ -68,4 +73,16 @@ Dialog {
 .footer {
   margin-top: auto;
   flex-shrink: 0;
+}
+
+.higher-lower-buttons {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.higher-button,
+.lower-button {
+  margin-right: 5px;
+  height: 3.5em;
+  width: 7em;
 }

@@ -13,8 +13,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { DialogTitle } from "@material-ui/core";
+import Stack from "@mui/material/Stack/Stack";
 
-export function GameScreen(): JSX.Element {
+interface GameScreenProps {
+  category: string;
+}
+
+export function GameScreen(props: GameScreenProps): JSX.Element {
   const [countries, setCountries] = useState<CountryType[] | null>(null);
   const [score, setScore] = useState<number>(0);
   const [initialised, setInitialised] = useState<boolean>(false);
@@ -132,34 +137,65 @@ export function GameScreen(): JSX.Element {
       <Link to="/">
         <Button variant="contained">Home</Button>
       </Link>
-      <Button variant="contained" onClick={() => handleGuess(true, "area")}>
-        Higher
-      </Button>
-      <Button variant="contained" onClick={() => handleGuess(false, "area")}>
-        Lower
-      </Button>
       <p>score: {score}</p>
+      <p>category: {props.category}</p>
       {countryOptions && (
         <div className="options-panel">
           <div className="left-option">
-            <p>{countryOptions[0].name}</p>
-            <p>population {readableNumber(countryOptions[0].population)}</p>
-            <p>
-              area {readableNumber(countryOptions[0].area)} km<sup>2</sup>{" "}
-            </p>
+            <div className="country-info">
+              <h2>{countryOptions[0].name}</h2>
+              {props.category === "population" && (
+                <p>population {readableNumber(countryOptions[0].population)}</p>
+              )}
+              {props.category === "area" && (
+                <p>
+                  area {readableNumber(countryOptions[0].area)} km<sup>2</sup>{" "}
+                </p>
+              )}
+            </div>
             <img
               src={countryOptions[0].flag}
               alt={`country flag of ${countryOptions[0].name}`}
             />
           </div>
           <div className="right-option">
-            <p>{countryOptions[1].name}</p>
-            <p>population {readableNumber(countryOptions[1].population)}</p>
-            <p>area: ???</p>
+            <div className="country-info">
+              <h2>{countryOptions[1].name}</h2>
+              {props.category === "population" && openAlert ? (
+                <p>population {readableNumber(countryOptions[1].population)}</p>
+              ) : (
+                props.category === "population" && <p>population ???</p>
+              )}
+              {props.category === "area" && openAlert ? (
+                <p>
+                  area {readableNumber(countryOptions[1].area)} km<sup>2</sup>
+                </p>
+              ) : (
+                props.category === "area" && <p>area ???</p>
+              )}
+            </div>
             <img
               src={countryOptions[1].flag}
               alt={`country flag of ${countryOptions[1].name}`}
             />
+            <Stack spacing={2} direction="row" m={3} justifyContent="center">
+              <Button
+                className="higher-button"
+                style={{ fontSize: "1em", backgroundColor: "#006400" }}
+                variant="contained"
+                onClick={() => handleGuess(true, props.category)}
+              >
+                Higher
+              </Button>
+              <Button
+                className="lower-button"
+                style={{ fontSize: "1em", backgroundColor: "#8b0000" }}
+                variant="contained"
+                onClick={() => handleGuess(false, props.category)}
+              >
+                Lower
+              </Button>
+            </Stack>
           </div>
         </div>
       )}
