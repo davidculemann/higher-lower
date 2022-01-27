@@ -1,4 +1,5 @@
 import axios from "axios";
+import { config } from "dotenv";
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { CountryType } from "../utils/types/countryType";
@@ -17,7 +18,11 @@ import Stack from "@mui/material/Stack/Stack";
 
 interface GameScreenProps {
   category: string;
+  loggedInUser: string;
 }
+
+config();
+const serverBaseURL = process.env.REACT_APP_API_BASE;
 
 export function GameScreen(props: GameScreenProps): JSX.Element {
   const [countries, setCountries] = useState<CountryType[] | null>(null);
@@ -60,6 +65,14 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialised]);
 
+  const handlePostScore = async () => {
+    await axios.post(`${serverBaseURL}scores`, {
+      name: props.loggedInUser,
+      score: score,
+      category: `Geography (${props.category})`,
+    });
+  };
+
   const handleRestartGame = () => {
     setScore(0);
     handleFetchCountries();
@@ -80,6 +93,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         setScore(score + 1);
       } else {
         //terminate game
+        handlePostScore();
         setOpenAlert(true);
       }
     } else if (subcategory === "population" && countryOptions) {
@@ -94,6 +108,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         setScore(score + 1);
       } else {
         //terminate game
+        handlePostScore();
         setOpenAlert(true);
       }
     }
@@ -181,7 +196,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
             <Stack spacing={2} direction="row" m={3} justifyContent="center">
               <Button
                 className="higher-button"
-                style={{ fontSize: "1em", backgroundColor: "#006400" }}
+                style={{ fontSize: "1em", backgroundColor: "#179825" }}
                 variant="contained"
                 onClick={() => handleGuess(true, props.category)}
               >
@@ -189,7 +204,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
               </Button>
               <Button
                 className="lower-button"
-                style={{ fontSize: "1em", backgroundColor: "#8b0000" }}
+                style={{ fontSize: "1em", backgroundColor: "#ee1e06" }}
                 variant="contained"
                 onClick={() => handleGuess(false, props.category)}
               >

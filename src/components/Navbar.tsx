@@ -5,6 +5,8 @@ import axios from "axios";
 import { config } from "dotenv";
 import { useState } from "react";
 import { UserType } from "../utils/types/userType";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 // import { RiArrowUpDownLine } from "react-icons/ri";
 
 config();
@@ -50,10 +52,9 @@ export function Navbar(props: NavBarProps): JSX.Element {
   return (
     <div className="navbar">
       <h1 className="home-header">
-        <span style={{ color: "#006400", fontSize: "1.5em" }}>Higher</span>
-        <span style={{ color: "#8b0000", fontSize: "1.5em" }}>Lower</span>
-        <span>&nbsp;</span>
-        {/* <RiArrowUpDownLine /> */}
+        <ArrowUpwardIcon fontSize="large" className="title-arrow" />
+        HigherLower
+        <ArrowDownwardIcon fontSize="large" className="title-arrow" />
       </h1>
       {props.loggedInUser === "" ? (
         <div className="login-div">
