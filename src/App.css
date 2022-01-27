@@ -96,8 +96,19 @@ body {
 
 img {
   height: 400px;
+  width: auto;
   max-width: 100%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation: flag-entry 0.5s ease-in-out;
+}
+
+@keyframes flag-entry {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 100%;
+  }
 }
 
 Dialog {
@@ -122,4 +133,13 @@ Dialog {
   margin-top: auto;
   flex-shrink: 0;
   flex: 1;
+}
+
+.volume {
+  transform: scale(1.3);
+}
+
+.volume:hover {
+  cursor: pointer;
+  transform: scale(1.5);
 }

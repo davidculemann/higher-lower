@@ -7,6 +7,10 @@ import { restcountriesURL } from "../utils/apiURL";
 import { getTwoRandomInts } from "../utils/getTwoRandomInts";
 import { readableNumber } from "../utils/readableNumber";
 import { GeoFooter } from "./GeoFooter";
+import { useSound } from "use-sound";
+import correct from "../sounds/correct.mp3";
+import wrong from "../sounds/wrong.wav";
+import { ImVolumeMedium, ImVolumeMute2 } from "react-icons/im";
 //MUI dialog imports
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -32,6 +36,10 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
     null
   );
   const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [soundSetting, setSoundSetting] = useState<boolean>(true);
+
+  const [playCorrect] = useSound(correct);
+  const [playWrong] = useSound(wrong);
 
   const handleFetchCountries = useCallback(() => {
     axios
@@ -52,8 +60,9 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
           })
         );
         setCountries(countryFields);
-        setInitialised(true);
+        setInitialised(!initialised);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -76,38 +85,42 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
   const handleRestartGame = () => {
     setScore(0);
     handleFetchCountries();
-    //triggering createOptionArr twice (BUG)
-    setInitialised(false);
+    createOptionArr();
   };
 
   const handleGuess = (higher: boolean, subcategory: string) => {
     console.log("user tried to guess");
     if (subcategory === "area" && countryOptions) {
       if (
-        (higher && countryOptions[1].area > countryOptions[0].area) ||
-        (!higher && countryOptions[1].area < countryOptions[0].area)
+        (higher && countryOptions[1].area >= countryOptions[0].area) ||
+        (!higher && countryOptions[1].area <= countryOptions[0].area)
       ) {
         //correct!
+        soundSetting && playCorrect();
         console.log("guessed correct!");
         createOptionArr();
         setScore(score + 1);
       } else {
         //terminate game
+        soundSetting && playWrong();
         handlePostScore();
         setOpenAlert(true);
       }
     } else if (subcategory === "population" && countryOptions) {
       if (
         (higher &&
-          countryOptions[1].population > countryOptions[0].population) ||
-        (!higher && countryOptions[1].population < countryOptions[0].population)
+          countryOptions[1].population >= countryOptions[0].population) ||
+        (!higher &&
+          countryOptions[1].population <= countryOptions[0].population)
       ) {
         //correct!
+        soundSetting && playCorrect();
         console.log("guessed correct!");
         createOptionArr();
         setScore(score + 1);
       } else {
         //terminate game
+        soundSetting && playWrong();
         handlePostScore();
         setOpenAlert(true);
       }
@@ -149,26 +162,48 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
 
   return (
     <div className="game-screen">
-      <Link to="/">
-        <Button variant="contained">Home</Button>
-      </Link>
-      <p>score: {score}</p>
-      <p>category: {props.category}</p>
+      <Stack
+        display="flex"
+        spacing={2}
+        direction="row"
+        m={3}
+        alignItems="center"
+      >
+        <Link to="/">
+          <Button variant="contained">Home</Button>
+        </Link>
+        {soundSetting ? (
+          <ImVolumeMedium
+            className="volume"
+            onClick={() => setSoundSetting(!soundSetting)}
+          />
+        ) : (
+          <ImVolumeMute2
+            className="volume"
+            onClick={() => setSoundSetting(!soundSetting)}
+          />
+        )}
+        <h3>(category: {props.category})&nbsp;&nbsp;</h3>
+        <h2>score: {score}</h2>
+      </Stack>
       {countryOptions && (
         <div className="options-panel">
           <div className="left-option">
             <div className="country-info">
               <h2>{countryOptions[0].name}</h2>
               {props.category === "population" && (
-                <p>population {readableNumber(countryOptions[0].population)}</p>
+                <h3>
+                  population {readableNumber(countryOptions[0].population)}
+                </h3>
               )}
               {props.category === "area" && (
-                <p>
+                <h3>
                   area {readableNumber(countryOptions[0].area)} km<sup>2</sup>{" "}
-                </p>
+                </h3>
               )}
             </div>
             <img
+              key={countryOptions[1].name}
               src={countryOptions[0].flag}
               alt={`country flag of ${countryOptions[0].name}`}
             />
@@ -177,19 +212,22 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
             <div className="country-info">
               <h2>{countryOptions[1].name}</h2>
               {props.category === "population" && openAlert ? (
-                <p>population {readableNumber(countryOptions[1].population)}</p>
+                <h2>
+                  population {readableNumber(countryOptions[1].population)}
+                </h2>
               ) : (
-                props.category === "population" && <p>population ???</p>
+                props.category === "population" && <h3>population ???</h3>
               )}
               {props.category === "area" && openAlert ? (
-                <p>
+                <h3>
                   area {readableNumber(countryOptions[1].area)} km<sup>2</sup>
-                </p>
+                </h3>
               ) : (
-                props.category === "area" && <p>area ???</p>
+                props.category === "area" && <h3>area ???</h3>
               )}
             </div>
             <img
+              key={countryOptions[1].name}
               src={countryOptions[1].flag}
               alt={`country flag of ${countryOptions[1].name}`}
             />
