@@ -20,7 +20,12 @@ function App(): JSX.Element {
           path="/"
           element={<HomeScreen category={category} setCategory={setCategory} />}
         />
-        <Route path="play" element={<GameScreen category={category} />} />
+        <Route
+          path="play"
+          element={
+            <GameScreen category={category} loggedInUser={loggedInUser} />
+          }
+        />
       </Routes>
     </Router>
   );
