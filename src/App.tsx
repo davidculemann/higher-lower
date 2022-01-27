@@ -10,10 +10,11 @@ import { useState } from "react";
 
 function App(): JSX.Element {
   const [category, setCategory] = useState<string>("area");
+  const [loggedInUser, setLoggedInUser] = useState<string>("");
 
   return (
     <Router>
-      <Navbar />
+      <Navbar loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} />
       <Routes>
         <Route
           path="/"
