@@ -11,6 +11,8 @@ import { useState } from "react";
 function App(): JSX.Element {
   const [category, setCategory] = useState<string>("area");
   const [loggedInUser, setLoggedInUser] = useState<string>("");
+  const [time, setTime] = useState<number>(30);
+  const [toggleTimer, setToggleTimer] = useState<boolean>(false);
 
   return (
     <Router>
@@ -18,12 +20,25 @@ function App(): JSX.Element {
       <Routes>
         <Route
           path="/"
-          element={<HomeScreen category={category} setCategory={setCategory} />}
+          element={
+            <HomeScreen
+              category={category}
+              setCategory={setCategory}
+              toggleTimer={toggleTimer}
+              setToggleTimer={setToggleTimer}
+            />
+          }
         />
         <Route
           path="play"
           element={
-            <GameScreen category={category} loggedInUser={loggedInUser} />
+            <GameScreen
+              category={category}
+              loggedInUser={loggedInUser}
+              time={time}
+              setTime={setTime}
+              toggleTimer={toggleTimer}
+            />
           }
         />
       </Routes>

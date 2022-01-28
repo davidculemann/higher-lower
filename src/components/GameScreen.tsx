@@ -10,7 +10,13 @@ import { GeoFooter } from "./GeoFooter";
 import { useSound } from "use-sound";
 import correct from "../sounds/correct.mp3";
 import wrong from "../sounds/wrong.wav";
+import timer from "../sounds/timer.wav";
 import { ImVolumeMedium, ImVolumeMute2 } from "react-icons/im";
+import Stack from "@mui/material/Stack/Stack";
+import { Timer } from "./Timer";
+import { AiFillHome } from "react-icons/ai";
+import { VscDebugRestart } from "react-icons/vsc";
+
 //MUI dialog imports
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -18,11 +24,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { DialogTitle } from "@material-ui/core";
-import Stack from "@mui/material/Stack/Stack";
 
 interface GameScreenProps {
   category: string;
   loggedInUser: string;
+  time: number;
+  setTime: (input: number) => void;
+  toggleTimer: boolean;
 }
 
 config();
@@ -37,9 +45,12 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
   );
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [soundSetting, setSoundSetting] = useState<boolean>(true);
+  const [countdownEnd, setCountdownEnd] = useState<boolean>(false);
 
+  //sound effects
   const [playCorrect] = useSound(correct);
   const [playWrong] = useSound(wrong);
+  const [playTimer, { stop }] = useSound(timer);
 
   const handleFetchCountries = useCallback(() => {
     axios
@@ -65,8 +76,21 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const time = props.time;
+  useEffect(() => {
+    if (time === 9) {
+      playTimer();
+      setCountdownEnd(true);
+    } else if (time === 0 && countdownEnd) {
+      handleEndGame();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time, playTimer]);
+
   useEffect(() => {
     handleFetchCountries();
+    props.setTime(30);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleFetchCountries]);
 
   useEffect(() => {
@@ -75,17 +99,35 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
   }, [initialised]);
 
   const handlePostScore = async () => {
-    await axios.post(`${serverBaseURL}scores`, {
-      name: props.loggedInUser,
-      score: score,
-      category: `Geography (${props.category})`,
-    });
+    if (props.toggleTimer) {
+      await axios.post(`${serverBaseURL}scores`, {
+        name: props.loggedInUser,
+        score: score,
+        category: `Geography (${props.category}, T)`,
+      });
+    } else {
+      await axios.post(`${serverBaseURL}scores`, {
+        name: props.loggedInUser,
+        score: score,
+        category: `Geography (${props.category})`,
+      });
+    }
   };
 
   const handleRestartGame = () => {
+    stop();
     setScore(0);
+    props.setTime(30);
     handleFetchCountries();
     createOptionArr();
+  };
+
+  const handleEndGame = () => {
+    stop();
+    soundSetting && playWrong();
+    props.setTime(0);
+    handlePostScore();
+    setOpenAlert(true);
   };
 
   const handleGuess = (higher: boolean, subcategory: string) => {
@@ -101,10 +143,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         createOptionArr();
         setScore(score + 1);
       } else {
-        //terminate game
-        soundSetting && playWrong();
-        handlePostScore();
-        setOpenAlert(true);
+        handleEndGame();
       }
     } else if (subcategory === "population" && countryOptions) {
       if (
@@ -119,10 +158,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         createOptionArr();
         setScore(score + 1);
       } else {
-        //terminate game
-        soundSetting && playWrong();
-        handlePostScore();
-        setOpenAlert(true);
+        handleEndGame();
       }
     }
   };
@@ -164,14 +200,15 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
     <div className="game-screen">
       <Stack
         display="flex"
-        spacing={2}
+        spacing={5}
         direction="row"
         m={3}
         alignItems="center"
       >
         <Link to="/">
-          <Button variant="contained">Home</Button>
+          <AiFillHome className="home-button" onClick={() => stop()} />
         </Link>
+
         {soundSetting ? (
           <ImVolumeMedium
             className="volume"
@@ -183,8 +220,19 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
             onClick={() => setSoundSetting(!soundSetting)}
           />
         )}
-        <h3>(category: {props.category})&nbsp;&nbsp;</h3>
+        <h2>(category: {props.category})</h2>
         <h2>score: {score}</h2>
+        {props.toggleTimer && countryOptions && (
+          <Timer time={props.time} setTime={props.setTime} />
+        )}
+        <Button
+          className="restart-button"
+          onClick={() => handleRestartGame()}
+          variant="outlined"
+        >
+          Restart&nbsp;&nbsp;
+          <VscDebugRestart className="restart-icon" />
+        </Button>
       </Stack>
       {countryOptions && (
         <div className="options-panel">
@@ -266,7 +314,14 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         </DialogContent>
         <DialogActions>
           <Link to="/">
-            <Button onClick={() => setOpenAlert(false)}>Main menu</Button>
+            <Button
+              onClick={() => {
+                stop();
+                setOpenAlert(false);
+              }}
+            >
+              Main menu
+            </Button>
           </Link>
           <Button
             onClick={() => {
