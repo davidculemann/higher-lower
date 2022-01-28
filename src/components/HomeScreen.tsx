@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   Radio,
@@ -8,6 +9,7 @@ import {
 } from "@material-ui/core";
 import {
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -27,15 +29,26 @@ const serverBaseURL = process.env.REACT_APP_API_BASE;
 interface HomeScreenProps {
   category: string;
   setCategory: (input: string) => void;
+  toggleTimer: boolean;
+  setToggleTimer: (input: boolean) => void;
 }
 
 export function HomeScreen(props: HomeScreenProps): JSX.Element {
   const [highscores, setHighscores] = useState<HighScoreType[] | null>(null);
+  const [timetrialScores, setTimetrialScores] = useState<
+    HighScoreType[] | null
+  >(null);
+  const [showTimetrialScores, setShowTimetrialScores] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const handleFetchHighscores = async () => {
       const highscoresResponse = await axios.get(`${serverBaseURL}scores`);
       setHighscores(highscoresResponse.data);
+      const timetrialscoresResponse = await axios.get(
+        `${serverBaseURL}scores/timetrial`
+      );
+      setTimetrialScores(timetrialscoresResponse.data);
     };
     handleFetchHighscores();
   }, []);
@@ -43,8 +56,16 @@ export function HomeScreen(props: HomeScreenProps): JSX.Element {
   return (
     <div className="home-screen">
       <div className="home-screen-left">
-        <Box className="game-options">
-          <h2>Game category:</h2>
+        <Box
+          className="game-options"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "left",
+            alignItems: "left",
+          }}
+        >
+          <h2>Game settings:</h2>
           <FormControl>
             {/* <FormLabel id="demo-radio-buttons-group-label">
             Game category
@@ -63,7 +84,15 @@ export function HomeScreen(props: HomeScreenProps): JSX.Element {
               />
             </RadioGroup>
           </FormControl>
+          <FormControlLabel
+            style={{ marginTop: 5 }}
+            control={<Checkbox />}
+            label="Time trial (30s)"
+            checked={props.toggleTimer}
+            onChange={(e) => props.setToggleTimer(!props.toggleTimer)}
+          />
         </Box>
+
         <Box className="play-button">
           <Link to="/play">
             <Button
@@ -78,7 +107,24 @@ export function HomeScreen(props: HomeScreenProps): JSX.Element {
       </div>
       {highscores && (
         <div className="leaderboard">
-          <h2>Leaderboard</h2>
+          <Stack display="flex" spacing={4} direction="row" alignItems="center">
+            <h2>Leaderboard </h2>
+            <Button
+              variant="contained"
+              disabled={!showTimetrialScores}
+              onClick={() => setShowTimetrialScores(false)}
+            >
+              Standard{" "}
+            </Button>
+            <Button
+              variant="contained"
+              disabled={showTimetrialScores}
+              onClick={() => setShowTimetrialScores(true)}
+            >
+              Time trial
+            </Button>
+          </Stack>
+
           <TableContainer
             component={Paper}
             sx={{ minWidth: 500, maxWidth: 600 }}
@@ -110,17 +156,34 @@ export function HomeScreen(props: HomeScreenProps): JSX.Element {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {highscores.map((score, index) => (
-                  <TableRow key={index}>
-                    <TableCell align="left">{index + 1}</TableCell>
-                    <TableCell align="left">{score.name}</TableCell>
-                    <TableCell align="center">{score.highscore}</TableCell>
-                    <TableCell align="left">{score.category}</TableCell>
-                  </TableRow>
-                ))}
+                {!showTimetrialScores
+                  ? highscores.map((score, index) => (
+                      <TableRow key={index}>
+                        <TableCell align="left">{index + 1}</TableCell>
+                        <TableCell align="left">{score.name}</TableCell>
+                        <TableCell align="center">{score.highscore}</TableCell>
+                        <TableCell align="left">{score.category}</TableCell>
+                      </TableRow>
+                    ))
+                  : timetrialScores?.map((score, index) => (
+                      <TableRow key={index}>
+                        <TableCell align="left">{index + 1}</TableCell>
+                        <TableCell align="left">{score.name}</TableCell>
+                        <TableCell align="center">{score.highscore}</TableCell>
+                        <TableCell align="left">
+                          {score.category.slice(0, score.category.length - 4) +
+                            ")"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </TableContainer>
+          {showTimetrialScores ? (
+            <p>showing top 10 time trial scores</p>
+          ) : (
+            <p>showing top 10 standard scores</p>
+          )}
         </div>
       )}
     </div>

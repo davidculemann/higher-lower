@@ -19,7 +19,7 @@ body {
 }
 
 .home-screen {
-  padding: 50px 100px;
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -63,6 +63,20 @@ body {
   font-size: 2.8em;
 }
 
+.select-leaderboard {
+  background-color: rgb(18, 60, 102);
+}
+
+.deselect-leaderboard {
+  background-color: rgb(161, 183, 206);
+}
+
+.select-leaderboard:hover,
+.deselect-leaderboard:hover {
+  background: slategray;
+  cursor: pointer;
+}
+
 .navbar {
   display: flex;
   padding: 1.3em;
@@ -91,7 +105,10 @@ body {
 }
 
 .game-screen {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
+  height: 100%;
 }
 
 img {
@@ -99,7 +116,7 @@ img {
   width: auto;
   max-width: 100%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  animation: flag-entry 0.5s ease-in-out;
+  animation: flag-entry 0.75s ease-in-out;
 }
 
 @keyframes flag-entry {
@@ -108,6 +125,21 @@ img {
   }
   to {
     opacity: 100%;
+  }
+}
+
+.low-time {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  from {
+    opacity: 100%;
+    color: darkred;
+  }
+  to {
+    opacity: 50%;
+    color: tomato;
   }
 }
 
@@ -130,16 +162,42 @@ Dialog {
 }
 
 .footer {
-  margin-top: auto;
-  flex-shrink: 0;
-  flex: 1;
+  position: absolute;
+  bottom: 0px;
 }
 
 .volume {
-  transform: scale(1.3);
+  transform: scale(1.5);
 }
 
-.volume:hover {
+.volume:hover,
+.home-button:hover {
   cursor: pointer;
-  transform: scale(1.5);
+  transform: scale(1.8);
+}
+
+.restart-button {
+  height: 3em;
+}
+
+.restart-icon {
+  transform: scale(1.2);
+}
+
+.restart-button:hover .restart-icon {
+  animation: restart-rotate 1s linear;
+}
+
+@keyframes restart-rotate {
+  from {
+    transform: rotate(0deg) scale(1.2);
+  }
+  to {
+    transform: rotate(-360deg) scale(1.2);
+  }
+}
+
+.home-button {
+  transform: scale(1.6);
+  color: black;
 }
