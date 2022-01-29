@@ -22,21 +22,18 @@ export function Navbar(props: NavBarProps): JSX.Element {
 
   const handleSignIn = async () => {
     try {
-      console.log(
-        `${usernameInput} just tried to login or signup, checking if new user...`
-      );
       const usersResponse = await axios.get(`${serverBaseURL}users`);
       if (
         usersResponse.data.map((e: UserType) => e.name).includes(usernameInput)
       ) {
         //login the user, since they exist (not ideal method of authorisation but good enough for now)
         props.setLoggedInUser(usernameInput);
-        console.log(`${usernameInput} was logged in`);
+
         setUsernameInput("");
       } else {
         //signup the user, then log them in
         await axios.post(`${serverBaseURL}users/${usernameInput}`);
-        console.log(`${usernameInput} was signed up and logged in`);
+
         props.setLoggedInUser(usernameInput);
         setUsernameInput("");
       }

@@ -131,7 +131,6 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
   };
 
   const handleGuess = (higher: boolean, subcategory: string) => {
-    console.log("user tried to guess");
     if (subcategory === "area" && countryOptions) {
       if (
         (higher && countryOptions[1].area >= countryOptions[0].area) ||
@@ -139,7 +138,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
       ) {
         //correct!
         soundSetting && playCorrect();
-        console.log("guessed correct!");
+
         createOptionArr();
         setScore(score + 1);
       } else {
@@ -154,7 +153,7 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
       ) {
         //correct!
         soundSetting && playCorrect();
-        console.log("guessed correct!");
+
         createOptionArr();
         setScore(score + 1);
       } else {
@@ -164,8 +163,6 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
   };
 
   function createOptionArr() {
-    console.log("attempting to create options arr");
-    console.log(countries);
     if (countries !== null) {
       if (countryOptions === null) {
         //initialise for game start
@@ -176,16 +173,14 @@ export function GameScreen(props: GameScreenProps): JSX.Element {
         setCountries(
           countries.filter((el, index) => !startIndices.includes(index))
         );
-        console.log("initialised options arr");
       } else {
         //shuffle after a correct guess
         const newCountryIndex = getTwoRandomInts(countries.length)[0];
-        console.log(newCountryIndex);
+
         setCountryOptions([countryOptions[1], countries[newCountryIndex]]);
         setCountries(
           countries.filter((el, index) => index !== newCountryIndex)
         );
-        console.log("shuffled options arr");
       }
     }
   }
