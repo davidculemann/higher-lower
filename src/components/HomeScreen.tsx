@@ -95,11 +95,7 @@ export function HomeScreen(props: HomeScreenProps): JSX.Element {
 
         <Box className="play-button">
           <Link to="/play">
-            <Button
-              variant="contained"
-              style={{ fontSize: "25px" }}
-              onClick={() => console.log(props.category)}
-            >
+            <Button variant="contained" style={{ fontSize: "25px" }}>
               Play
             </Button>
           </Link>

@@ -112,16 +112,16 @@ body {
 }
 
 img {
-  height: 400px;
+  max-height: 22rem;
   width: auto;
-  max-width: 100%;
+  max-width: 95%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  animation: flag-entry 0.75s ease-in-out;
+  animation: flag-entry 0.5s ease-in-out;
 }
 
 @keyframes flag-entry {
   from {
-    opacity: 0;
+    opacity: 10%;
   }
   to {
     opacity: 100%;
@@ -138,8 +138,8 @@ img {
     color: darkred;
   }
   to {
-    opacity: 50%;
-    color: tomato;
+    opacity: 80%;
+    color: rgb(218, 53, 24);
   }
 }
 
